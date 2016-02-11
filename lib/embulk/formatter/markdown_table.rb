@@ -2,7 +2,6 @@ module Embulk
   module Formatter
     class MarkdownTable < FormatterPlugin
       Plugin.register_formatter("markdown_table", self)
-      VALID_ENCODINGS = %w(UTF-8 UTF-16LE UTF-32BE UTF-32LE UTF-32BE)
       NEWLINES = {
         'CRLF' => "\r\n",
         'LF' => "\n",
@@ -22,9 +21,6 @@ module Embulk
           'encoding' => config.param('encoding', :string, default: 'UTF-8'),
           'newline' => config.param('newline', :string, default: 'LF')
         }
-
-        encoding = task['encoding'].upcase
-        raise "encoding must be one of #{join_texts(VALID_ENCODINGS)}" unless VALID_ENCODINGS.include?(encoding)
 
         newline = task['newline'].upcase
         raise "newline must be one of #{join_texts(NEWLINES.keys)}" unless NEWLINES.has_key?(newline)
