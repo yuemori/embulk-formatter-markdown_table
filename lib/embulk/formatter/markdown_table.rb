@@ -6,8 +6,7 @@ module Embulk
         'CRLF' => "\r\n",
         'LF' => "\n",
         'CR' => "\r",
-        'NUL' => "\0",
-        'NO' => '',
+        'NUL' => "\0"
       }
 
       def self.join_texts((*inits,last), opt = {})
