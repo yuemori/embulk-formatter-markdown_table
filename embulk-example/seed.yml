@@ -1,5 +1,0 @@
-in:
-  type: file
-  path_prefix: "/usr/src/app/embulk-formatter-markdown_table/embulk-example/csv/sample_"
-out:
-  type: stdout
