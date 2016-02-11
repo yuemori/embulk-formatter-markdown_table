@@ -2,12 +2,12 @@
 Gem::Specification.new do |spec|
   spec.name          = "embulk-formatter-markdown_table"
   spec.version       = "0.1.0"
-  spec.authors       = ["YOUR_NAME"]
+  spec.authors       = ["yuemori"]
   spec.summary       = "Markdown Table formatter plugin for Embulk"
   spec.description   = "Formats Markdown Table files for other file output plugins."
-  spec.email         = ["YOUR_NAME"]
+  spec.email         = ["yuemori@aiming-inc.com"]
   spec.licenses      = ["MIT"]
-  # TODO set this: spec.homepage      = "https://github.com/YOUR_NAME/embulk-formatter-markdown_table"
+  spec.homepage      = "https://github.com/yuemori/embulk-formatter-markdown_table"
 
   spec.files         = `git ls-files`.split("\n") + Dir["classpath/*.jar"]
   spec.test_files    = spec.files.grep(%r{^(test|spec)/})
