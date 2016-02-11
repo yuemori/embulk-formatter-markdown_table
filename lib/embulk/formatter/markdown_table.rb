@@ -1,8 +1,15 @@
 module Embulk
   module Formatter
-
     class MarkdownTable < FormatterPlugin
       Plugin.register_formatter("markdown_table", self)
+      VALID_ENCODINGS = %w(UTF-8 UTF-16LE UTF-32BE UTF-32LE UTF-32BE)
+      NEWLINES = {
+        'CRLF' => "\r\n",
+        'LF' => "\n",
+        'CR' => "\r",
+        'NUL' => "\0",
+        'NO' => '',
+      }
 
       def self.join_texts((*inits,last), opt = {})
         delim = opt[:delimiter] || ', '
@@ -11,13 +18,24 @@ module Embulk
       end
 
       def self.transaction(config, schema, &control)
-        task = {}
+        task = {
+          'encoding' => config.param('encoding', :string, default: 'UTF-8'),
+          'newline' => config.param('newline', :string, default: 'LF')
+        }
+
+        encoding = task['encoding'].upcase
+        raise "encoding must be one of #{join_texts(VALID_ENCODINGS)}" unless VALID_ENCODINGS.include?(encoding)
+
+        newline = task['newline'].upcase
+        raise "newline must be one of #{join_texts(NEWLINES.keys)}" unless NEWLINES.has_key?(newline)
 
         yield(task)
       end
 
       def init
         @header_print = true
+        @encoding = task['encoding'].upcase
+        @newline = NEWLINES[task['newline'].upcase]
         @current_file = nil
         @current_file_size = 0
       end
@@ -34,12 +52,14 @@ module Embulk
           end
 
           if @header_print
-            @current_file.write "|#{page.schema.map(&:name).join('|')}|\n"
-            @current_file.write "|#{(["---"] * page.schema.size).join('|')}|\n"
+            header  = "|" + page.schema.map(&:name).join('|') + "|#{@newline}"
+            header += "|" + (["---"] * page.schema.size).join('|') + "|#{@newline}"
+            @current_file.write header.encode(@encoding)
             @header_print = false
           end
 
-          file_output.write "|#{record.join('|')}|\n"
+          row = "|" + record.join('|') + "|#{@newline}"
+          @current_file.write row.encode(@encoding)
         end
       end
 
@@ -47,6 +67,5 @@ module Embulk
         file_output.finish
       end
     end
-
   end
 end
